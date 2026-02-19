@@ -1,0 +1,56 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Models (large files)
+data/models/*.bin
+data/models/*.safetensors
+data/models/*.onnx
+*.pt
+*.ckpt
+
+# Data (sensitive)
+data/raw/*.txt
+data/raw/*.csv
+data/processed/*.json
+!data/raw/exemplo_*.txt
+!data/annotations/exemplo_*.jsonl
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs
+logs/
+*.log
+
+# Docker
+.dockerignore

@@ -1,0 +1,113 @@
+# Clinical NLP Pipeline - Configuracoes
+
+# Entidades clinicas suportadas (inspirado no SemClinBr)
+entities:
+  - MEDICAMENTO        # Farmacos, drogas, principios ativos
+  - DOSAGEM            # Quantidade e unidade (ex: 500mg, 2 comprimidos)
+  - FREQUENCIA         # Posologia (ex: 8/8h, 2x ao dia)
+  - VIA_ADMINISTRACAO  # Oral, IV, IM, subcutaneo, topico
+  - DIAGNOSTICO        # CID-10, diagnosticos clinicos
+  - PROCEDIMENTO       # Cirurgias, exames, terapias
+  - SINTOMA            # Queixas e manifestacoes clinicas
+  - EXAME              # Exames laboratoriais e de imagem
+  - RESULTADO_EXAME    # Valores numericos e qualitativos
+  - ANATOMIA           # Partes do corpo, orgaos, sistemas
+  - CONDICAO           # Doencas cronicas, comorbidades
+  - TEMPORAL           # Datas, duracoes, periodos
+  - NEGACAO            # Marcadores de negacao (nega, ausencia de, sem)
+
+# Modelos
+models:
+  # BERTimbau - BERT pre-treinado em portugues brasileiro
+  bertimbau:
+    name: neuralmind/bert-base-portuguese-cased
+    type: token-classification
+    max_length: 512
+    batch_size: 16
+    learning_rate: 5.0e-5
+    epochs: 10
+    warmup_ratio: 0.1
+
+  # BioBERTpt - BERT clinico/biomedico em portugues
+  biobertpt:
+    name: pucpr/biobertpt-all
+    type: token-classification
+    max_length: 512
+    batch_size: 16
+    learning_rate: 3.0e-5
+    epochs: 15
+    warmup_ratio: 0.1
+
+# Preprocessamento
+preprocessing:
+  # Normalizacao de texto clinico
+  lowercase: false
+  remove_accents: false
+  normalize_whitespace: true
+  expand_abbreviations: true
+  remove_phi: true  # Protected Health Information
+
+  # Abreviacoes medicas PT-BR
+  abbreviations:
+    "pcte": "paciente"
+    "dx": "diagnostico"
+    "rx": "prescricao"
+    "hda": "historia da doenca atual"
+    "hpp": "historia patologica pregressa"
+    "hf": "historia familiar"
+    "hs": "historia social"
+    "ap": "antecedentes pessoais"
+    "af": "antecedentes familiares"
+    "qp": "queixa principal"
+    "ex": "exame"
+    "tto": "tratamento"
+    "ctl": "controle"
+    "mpa": "medicamento para uso"
+    "ev": "endovenoso"
+    "vo": "via oral"
+    "im": "intramuscular"
+    "sc": "subcutaneo"
+    "sl": "sublingual"
+    "bid": "duas vezes ao dia"
+    "tid": "tres vezes ao dia"
+    "qid": "quatro vezes ao dia"
+    "prn": "se necessario"
+    "icc": "insuficiencia cardiaca congestiva"
+    "has": "hipertensao arterial sistemica"
+    "dm": "diabetes mellitus"
+    "dpoc": "doenca pulmonar obstrutiva cronica"
+    "iam": "infarto agudo do miocardio"
+    "avc": "acidente vascular cerebral"
+    "irc": "insuficiencia renal cronica"
+    "itu": "infeccao do trato urinario"
+    "mmii": "membros inferiores"
+    "mmss": "membros superiores"
+    "fc": "frequencia cardiaca"
+    "fr": "frequencia respiratoria"
+    "pa": "pressao arterial"
+    "sat": "saturacao"
+    "tax": "temperatura axilar"
+
+# API
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8080"
+  rate_limit: 100  # requests per minute
+  max_text_length: 10000  # caracteres
+
+# Avaliacao
+evaluation:
+  metrics:
+    - precision
+    - recall
+    - f1
+    - accuracy
+  average: micro  # micro, macro, weighted
+  split_ratio:
+    train: 0.8
+    val: 0.1
+    test: 0.1

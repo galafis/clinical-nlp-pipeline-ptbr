@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  clinical-nlp-api:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: clinical-nlp-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_NAME=neuralmind/bert-base-portuguese-cased
+      - MODEL_CACHE_DIR=/app/data/models
+      - DEVICE=cpu
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_WORKERS=4
+      - LOG_LEVEL=INFO
+    volumes:
+      - model_cache:/app/data/models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  model_cache:
+    driver: local
