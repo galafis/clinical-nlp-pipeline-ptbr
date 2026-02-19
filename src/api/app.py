@@ -11,6 +11,7 @@ Expoe o pipeline de NER clinico via endpoints FastAPI com:
 
 import os
 import time
+from contextlib import asynccontextmanager
 from typing import Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Query
@@ -135,6 +136,35 @@ _pipeline: Optional[ClinicalNERPipeline] = None
 _start_time: float = time.time()
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Gerencia ciclo de vida da aplicacao (startup/shutdown)."""
+    global _pipeline, _start_time
+    _start_time = time.time()
+
+    model_name = os.getenv(
+        "MODEL_NAME", "neuralmind/bert-base-portuguese-cased"
+    )
+    device = os.getenv("DEVICE", None)
+    checkpoint = os.getenv("MODEL_CHECKPOINT", None)
+
+    _pipeline = ClinicalNERPipeline(
+        model_name=model_name,
+        device=device,
+    )
+
+    try:
+        _pipeline.load(checkpoint_path=checkpoint)
+        logger.info("Pipeline carregado com sucesso no startup")
+    except Exception as e:
+        logger.warning(f"Pipeline iniciado sem modelo carregado: {e}")
+
+    yield  # Aplicacao rodando
+
+    # Shutdown (cleanup)
+    logger.info("Encerrando aplicacao...")
+
+
 def create_app() -> FastAPI:
     """Factory function para criar a aplicacao FastAPI."""
 
@@ -147,6 +177,7 @@ def create_app() -> FastAPI:
             "Transformer fine-tunados para o dominio clinico."
         ),
         version="1.0.0",
+        lifespan=lifespan,
         contact={
             "name": "Gabriel Demetrios Lafis",
             "url": "https://github.com/galafis",
@@ -166,33 +197,6 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    # ============================================================
-    # Eventos de ciclo de vida
-    # ============================================================
-
-    @app.on_event("startup")
-    async def startup():
-        """Carrega o pipeline NER no startup."""
-        global _pipeline, _start_time
-        _start_time = time.time()
-
-        model_name = os.getenv(
-            "MODEL_NAME", "neuralmind/bert-base-portuguese-cased"
-        )
-        device = os.getenv("DEVICE", None)
-        checkpoint = os.getenv("MODEL_CHECKPOINT", None)
-
-        _pipeline = ClinicalNERPipeline(
-            model_name=model_name,
-            device=device,
-        )
-
-        try:
-            _pipeline.load(checkpoint_path=checkpoint)
-            logger.info("Pipeline carregado com sucesso no startup")
-        except Exception as e:
-            logger.warning(f"Pipeline iniciado sem modelo carregado: {e}")
 
     # ============================================================
     # Endpoints

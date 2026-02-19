@@ -4,9 +4,17 @@ Quickstart — Clinical NLP Pipeline PT-BR
 Demonstra o uso basico do pipeline para extrair entidades
 clinicas de textos medicos em portugues brasileiro.
 
-Executar:
+Executar a partir da raiz do projeto:
     python examples/quickstart.py
 """
+
+import sys
+from pathlib import Path
+
+# Garantir que o diretorio raiz do projeto esta no sys.path
+_project_root = str(Path(__file__).resolve().parent.parent)
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
 
 from src.preprocessing.text_cleaner import ClinicalTextCleaner
 from src.preprocessing.abbreviation_expander import AbbreviationExpander

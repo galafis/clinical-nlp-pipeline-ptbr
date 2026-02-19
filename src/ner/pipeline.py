@@ -11,7 +11,6 @@ from datetime import datetime
 
 from loguru import logger
 
-from src.ner.clinical_ner import ClinicalNERModel
 from src.ner.entity_types import ClinicalEntityType, ENTITY_COLORS
 from src.preprocessing.text_cleaner import ClinicalTextCleaner
 from src.preprocessing.abbreviation_expander import AbbreviationExpander
@@ -118,6 +117,9 @@ class ClinicalNERPipeline:
         self.confidence_threshold = confidence_threshold
         self.expand_abbreviations = expand_abbreviations
         self.detect_negations = detect_negations
+
+        # Lazy import para evitar dependencia de torch/transformers na importacao
+        from src.ner.clinical_ner import ClinicalNERModel
 
         # Componentes do pipeline
         self.ner_model = ClinicalNERModel(
