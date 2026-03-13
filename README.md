@@ -11,6 +11,7 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker)](Dockerfile)
 
 **Extracao de entidades medicas (NER) de prontuarios eletronicos, receituarios e laudos clinicos em portugues brasileiro usando BERTimbau e BioBERTpt. Reconhece 13 tipos de entidades clinicas com deteccao de negacao e expansao de 90+ abreviacoes medicas.**
 
